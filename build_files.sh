@@ -1,3 +1,7 @@
+echo "upgrading openssl version..."
+sudo apt-get update
+sudo apt-get install openssl libssl-dev
+
 echo "installing requirements..."
 pip install -r requirements.txt
 
