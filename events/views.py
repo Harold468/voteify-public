@@ -11,15 +11,18 @@ from django.contrib.auth.hashers import check_password
 from decouple import config
 from django.template.loader import render_to_string
 import os
-
+from datetime import datetime
 
 class Vote(APIView):
     permission_classes=[AllowAny,]
     def post(self,request):
         try:
+            current_time = datetime.now()
             data = request.data
             vote_serializer = VoteSerializer(data = data)
             event = EVENT.objects.get(id=data['event'])
+            if event.to_date.strftime('%D') < current_time.strftime('%D'):
+                return Response('Competition date ended,unable to vote',status.HTTP_400_BAD_REQUEST)
             if event.paid:
                 value = float(data['vote']) *float(event.amount)
                 event.total_balance = float(event.total_balance) +float(value)
